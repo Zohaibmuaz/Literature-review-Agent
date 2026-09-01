@@ -26,9 +26,11 @@ export default function Home() {
     documentTitle: `Research_Paper_${topic.replace(/\s+/g, '_')}`,
   });
 
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
   const fetchHistory = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/history");
+      const res = await fetch(`${API_URL}/history`);
       if (res.ok) {
         const data = await res.json();
         setHistory(data.history);
@@ -52,7 +54,7 @@ export default function Home() {
     setShowHistory(false);
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/generate-review", {
+      const res = await fetch(`${API_URL}/generate-review`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ topic, author, institution }),
