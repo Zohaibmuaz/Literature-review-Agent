@@ -3,5 +3,8 @@ uvicorn
 langgraph
 qdrant-client
 langchain
+langchain-openai
+fastembed
 pydantic
 python-dotenv
+requests
