@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+langgraph
+qdrant-client
+langchain
+pydantic
+python-dotenv
