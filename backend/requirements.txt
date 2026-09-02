@@ -4,7 +4,7 @@ langgraph
 qdrant-client
 langchain
 langchain-openai
-fastembed
+langchain-huggingface
 pydantic
 python-dotenv
 requests

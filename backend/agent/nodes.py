@@ -4,7 +4,7 @@ import requests
 import xml.etree.ElementTree as ET
 from typing import Dict, Any
 
-from fastembed import TextEmbedding
+from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from qdrant_client.models import PointStruct
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
@@ -12,8 +12,11 @@ from langchain_core.messages import SystemMessage, HumanMessage
 from .state import ResearchState
 from .qdrant_db import qdrant_client, COLLECTION_NAME
 
-# Initialize the embedding model globally
-embedding_model = TextEmbedding(model_name="BAAI/bge-small-en-v1.5")
+# Initialize the embedding model via Free Cloud API to save RAM
+embedding_model = HuggingFaceEndpointEmbeddings(
+    model="BAAI/bge-small-en-v1.5",
+    huggingfacehub_api_token=os.getenv("HF_TOKEN")
+)
 
 def fetch_arxiv(query: str, max_results: int = 10) -> list:
     # Use OR logic but sort by RELEVANCE to ensure we don't get 0 results for long queries
@@ -143,12 +146,12 @@ def reader_node(state: ResearchState) -> Dict[str, Any]:
         
     if docs:
         print(f"Generating embeddings for {len(docs)} documents...")
-        embeddings = list(embedding_model.embed(docs))
+        embeddings = embedding_model.embed_documents(docs)
         
         points = [
             PointStruct(
                 id=id_, 
-                vector=vector.tolist(), 
+                vector=vector, 
                 payload={"document": doc, **meta}
             )
             for id_, vector, doc, meta in zip(ids, embeddings, docs, metadata)
@@ -171,7 +174,7 @@ def writer_node(state: ResearchState) -> Dict[str, Any]:
     
     print("Querying Qdrant for relevant context...")
     # Embed the query
-    query_vector = list(embedding_model.embed([topic]))[0].tolist()
+    query_vector = embedding_model.embed_query(topic)
     
     # Retrieve top 15 most relevant chunks EXCLUSIVELY for this topic
     search_result = qdrant_client.query_points(
