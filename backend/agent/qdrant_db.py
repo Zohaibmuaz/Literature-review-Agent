@@ -30,5 +30,10 @@ def init_qdrant():
             field_name="query_topic",
             field_schema=PayloadSchemaType.KEYWORD,
         )
+        qdrant_client.create_payload_index(
+            collection_name=COLLECTION_NAME,
+            field_name="title",
+            field_schema=PayloadSchemaType.KEYWORD,
+        )
     except Exception as e:
         print(f"Payload index creation note (might already exist): {e}")
