@@ -46,27 +46,22 @@ export function CreditModal({
 
     setLoadingPack(name);
     try {
-      const res = await fetch("/api/payment/create-checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          packId: tierKey,
-          userId,
-          userEmail: userEmail || "",
-        }),
-      });
-
-      const data = await res.json();
-      if (res.ok && data.checkoutUrl) {
-        // Redirect to Safepay Checkout window (Cards, JazzCash, EasyPaisa)
-        window.location.href = data.checkoutUrl;
-      } else {
-        alert(data.error || "Could not initialize Safepay checkout.");
-        setLoadingPack(null);
+      const selectedTier = tiers.find((t) => t.key === tierKey) || tiers[1];
+      const host = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000";
+      const returnUrl = `${host}/payment/success?credits=${credits}&user_id=${userId}&pack=${encodeURIComponent(name)}`;
+      
+      // Build Polar checkout redirect with official success_url and customer_email
+      const polarUrl = new URL(selectedTier.polarLink);
+      polarUrl.searchParams.set("success_url", returnUrl);
+      polarUrl.searchParams.set("confirmation_url", returnUrl);
+      if (userEmail) {
+        polarUrl.searchParams.set("customer_email", userEmail);
       }
+
+      window.location.href = polarUrl.toString();
     } catch (err) {
-      console.error(err);
-      alert("Network error connecting to Safepay.");
+      console.error("Polar checkout redirect error:", err);
+      alert("Could not initialize checkout. Please try again.");
       setLoadingPack(null);
     }
   };
@@ -79,7 +74,6 @@ export function CreditModal({
       badgeColor: "bg-blue-100 text-blue-900 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800",
       credits: 3,
       price: "$4.99",
-      pkrPrice: "Rs. 1,400",
       perPaper: "$1.66 / paper",
       description: "Ideal for 1-2 course term papers or thesis sub-chapters.",
       popular: false,
@@ -90,9 +84,10 @@ export function CreditModal({
         "3 Full 6,000+ Word Reviews",
         "20 ArXiv Verified Citations",
         "Academic Word & PDF Export",
-        "Pay via Cards, JazzCash, EasyPaisa",
+        "Apple Pay, Google Pay, Cards",
       ],
-      buttonText: "Get 3 Papers ($4.99 • Rs. 1,400)",
+      buttonText: "Get 3 Papers ($4.99)",
+      polarLink: "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_dW8sKrSaTu3qomBYxesDgitWar1DAjRIQ6tUx2d9lex/redirect",
     },
     {
       key: "researcher",
@@ -101,7 +96,6 @@ export function CreditModal({
       badgeColor: "bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold",
       credits: 8,
       price: "$9.99",
-      pkrPrice: "Rs. 2,800",
       perPaper: "$1.24 / paper",
       description: "Best for complete semester assignments & literature reviews.",
       popular: true,
@@ -112,9 +106,10 @@ export function CreditModal({
         "8 Full 6,000+ Word Reviews",
         "Deep cross-paper taxonomy matrix",
         "Full Word & PDF with Zero Watermark",
-        "Pay via Cards, JazzCash, EasyPaisa",
+        "Apple Pay, Google Pay, Cards",
       ],
-      buttonText: "Get 8 Papers ($9.99 • Rs. 2,800)",
+      buttonText: "Get 8 Papers ($9.99)",
+      polarLink: "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_edzkB4PS35uyg7JmugmSKgNQ90c0o6v9aHFko08dpQL/redirect",
     },
     {
       key: "scholar",
@@ -123,7 +118,6 @@ export function CreditModal({
       badgeColor: "bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800",
       credits: 20,
       price: "$19.99",
-      pkrPrice: "Rs. 5,600",
       perPaper: "$1.00 / paper",
       description: "For thesis scholars, research labs & lab partners.",
       popular: false,
@@ -134,9 +128,10 @@ export function CreditModal({
         "20 Full Reviews (Only $1/paper!)",
         "Shareable with project partners",
         "Permanent Cloud Database Sync",
-        "Pay via Cards, JazzCash, EasyPaisa",
+        "Apple Pay, Google Pay, Cards",
       ],
-      buttonText: "Get 20 Papers ($19.99 • Rs. 5,600)",
+      buttonText: "Get 20 Papers ($19.99)",
+      polarLink: "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_gx9iDTeV7A3v2GE2ezQipu4YInK4jg4LfK9KW3Tu6bO/redirect",
     },
   ];
 
@@ -264,7 +259,7 @@ export function CreditModal({
                   {loadingPack === tier.name ? (
                     <>
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      <span>Connecting to Safepay...</span>
+                      <span>Connecting to Checkout...</span>
                     </>
                   ) : (
                     <span>{tier.buttonText}</span>

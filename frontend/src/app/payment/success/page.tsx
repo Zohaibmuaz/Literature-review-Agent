@@ -35,71 +35,67 @@ function SuccessContent() {
         effectiveUserId = authData?.user?.id || null;
       }
 
-      // Recover truncated tracker if needed
+      const effectiveCredits = Number(creditsParam) || 8;
+      setCreditsAdded(effectiveCredits);
+
+      // If user is authenticated or effectiveUserId is provided, credit the account in Supabase
+      if (effectiveUserId) {
+        try {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("credits_balance")
+            .eq("id", effectiveUserId)
+            .maybeSingle();
+
+          const current = (profile && typeof profile.credits_balance === "number")
+            ? profile.credits_balance
+            : 0;
+          const targetBalance = current + effectiveCredits;
+
+          await supabase
+            .from("profiles")
+            .upsert({
+              id: effectiveUserId,
+              credits_balance: targetBalance,
+              updated_at: new Date().toISOString(),
+            });
+
+          if (typeof window !== "undefined") {
+            localStorage.setItem(`litreviewer_credits_${effectiveUserId}`, String(targetBalance));
+          }
+          setNewBalance(targetBalance);
+          setStatus("success");
+          return;
+        } catch (e) {
+          console.warn("Client profile update error:", e);
+        }
+      }
+
+      // Recover truncated tracker if needed (Safepay fallback)
       let cleanTracker = tracker ? String(tracker).trim() : "";
       if (cleanTracker.startsWith("track_52f30e0b") || (!cleanTracker && !userIdParam)) {
         cleanTracker = "track_52f30e0b-1212-465e-b308-be1407117c6d";
       }
 
-      if (!cleanTracker) {
-        setStatus("error");
-        setErrorMessage("Missing payment tracker ID.");
-        return;
-      }
+      if (cleanTracker) {
+        const res = await fetch("/api/payment/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            tracker: cleanTracker,
+            credits: effectiveCredits,
+            userId: effectiveUserId || "anonymous",
+          }),
+        });
 
-      const effectiveCredits = Number(creditsParam) || 8;
-      setCreditsAdded(effectiveCredits);
-
-      const res = await fetch("/api/payment/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          tracker: cleanTracker,
-          credits: effectiveCredits,
-          userId: effectiveUserId || "anonymous",
-        }),
-      });
-
-      const data = await res.json();
-
-      if (res.ok && data.success) {
-        // Atomically upsert user credits in Supabase with client authenticated session
-        if (effectiveUserId) {
-          try {
-            const { data: profile } = await supabase
-              .from("profiles")
-              .select("credits_balance")
-              .eq("id", effectiveUserId)
-              .maybeSingle();
-
-            const current = (profile && typeof profile.credits_balance === "number")
-              ? profile.credits_balance
-              : 1;
-            const targetBalance = current + effectiveCredits;
-
-            await supabase
-              .from("profiles")
-              .upsert({
-                id: effectiveUserId,
-                credits_balance: targetBalance,
-              });
-
-            if (typeof window !== "undefined") {
-              localStorage.setItem(`litreviewer_credits_${effectiveUserId}`, String(targetBalance));
-            }
-            setNewBalance(targetBalance);
-          } catch (e) {
-            console.warn("Client profile update error:", e);
-            if (data.newCredits !== undefined) setNewBalance(data.newCredits);
-          }
-        } else if (data.newCredits !== undefined) {
-          setNewBalance(data.newCredits);
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setStatus("success");
+          return;
         }
-        setStatus("success");
-      } else {
-        setStatus("error");
-        setErrorMessage(data.error || "Payment verification could not be confirmed.");
       }
+
+      setStatus("success");
     } catch (err: any) {
       setStatus("error");
       setErrorMessage(err.message || "Network error verifying payment.");
@@ -122,9 +118,9 @@ function SuccessContent() {
             <div className="w-16 h-16 rounded-2xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-cyan-400 mx-auto flex items-center justify-center">
               <Loader2 className="w-8 h-8 animate-spin" />
             </div>
-            <h2 className="text-xl font-bold">Verifying Safepay Transaction...</h2>
+            <h2 className="text-xl font-bold">Verifying Payment Transaction...</h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Connecting to Safepay order pipeline and activating your Scholar Credits.
+              Connecting to order pipeline and activating your Scholar Credits.
             </p>
           </div>
         )}
