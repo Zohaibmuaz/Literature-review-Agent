@@ -128,20 +128,17 @@ export default function Home() {
           localStorage.setItem(`litreviewer_credits_${userId}`, String(authoritativeBal));
         }
       } else {
-        // Brand new registered user row doesn't exist yet: initialize with 1 free credit
-        const initialBal = 1;
-        await supabase
-          .from("profiles")
-          .upsert({
-            id: userId,
-            email: user?.email || "",
-            credits_balance: initialBal,
-            updated_at: new Date().toISOString(),
-          });
-        setCredits(initialBal);
+        // Profile row doesn't exist yet in Supabase. Check local cache before assuming 1:
         if (typeof window !== "undefined") {
-          localStorage.setItem(`litreviewer_credits_${userId}`, String(initialBal));
+          const cachedStr = localStorage.getItem(`litreviewer_credits_${userId}`);
+          if (cachedStr !== null) {
+            // Respect previously known balance (e.g., 0)
+            setCredits(parseInt(cachedStr, 10));
+            return;
+          }
         }
+        // If brand new user with no record anywhere: default to 1 credit
+        setCredits(1);
       }
     } catch (err) {
       console.warn("Error fetching user credits:", err);
@@ -206,22 +203,37 @@ export default function Home() {
 
       // Deduct 1 credit for full paper if user is logged in
       if (item.mode === "full" && user) {
-        const updatedCredits = Math.max(0, credits - 1);
-        setCredits(updatedCredits);
-        if (typeof window !== "undefined") {
-          localStorage.setItem(`litreviewer_credits_${user.id}`, String(updatedCredits));
-        }
         try {
-          await supabase
-            .from("profiles")
-            .upsert({
-              id: user.id,
-              email: user.email || "",
-              credits_balance: updatedCredits,
-              updated_at: new Date().toISOString(),
-            });
+          // 1. First attempt atomic RPC deduction in PostgreSQL
+          const { data: rpcBal, error: rpcErr } = await supabase.rpc("deduct_user_credit", {
+            user_uuid: user.id,
+          });
+
+          let newBal: number;
+          if (!rpcErr && typeof rpcBal === "number") {
+            newBal = rpcBal;
+          } else {
+            // 2. Fallback direct upsert in Supabase
+            newBal = Math.max(0, credits - 1);
+            const { error: upsertErr } = await supabase
+              .from("profiles")
+              .upsert({
+                id: user.id,
+                email: user.email || "",
+                credits_balance: newBal,
+                updated_at: new Date().toISOString(),
+              });
+            if (upsertErr) {
+              console.warn("Direct profile credit upsert notice:", upsertErr.message);
+            }
+          }
+
+          setCredits(newBal);
+          if (typeof window !== "undefined") {
+            localStorage.setItem(`litreviewer_credits_${user.id}`, String(newBal));
+          }
         } catch (err) {
-          console.error("Failed to persist deducted credit in Supabase:", err);
+          console.error("Failed to persist deducted credit:", err);
         }
       }
     } catch (err) {
@@ -363,6 +375,7 @@ export default function Home() {
     try {
       await supabase.auth.signOut();
       setUser(null);
+      setCredits(0);
       setShowUserDropdown(false);
     } catch (err) {
       console.error("Sign out error:", err);
