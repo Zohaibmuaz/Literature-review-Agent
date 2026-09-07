@@ -141,122 +141,148 @@ export function CreditModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <div 
-        className="relative w-full max-w-4xl rounded-2xl bg-white dark:bg-[#131620] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden p-5 sm:p-6 text-left animate-in zoom-in-95 duration-200 flex flex-col"
+        className="relative w-full max-w-4xl max-h-[92dvh] sm:max-h-[90vh] rounded-2xl bg-white dark:bg-[#131620] border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col text-left animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-3.5 right-3.5 p-1.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
-          title="Close modal"
-        >
-          <X className="w-5 h-5" />
-        </button>
+        {/* Sticky Modal Header */}
+        <div className="relative p-3.5 sm:p-5 pb-3 border-b border-slate-100 dark:border-slate-800/80 bg-white/95 dark:bg-[#131620]/95 backdrop-blur-xs shrink-0">
+          {/* Close Button */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 sm:top-4 sm:right-4 p-1.5 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            title="Close modal"
+          >
+            <X className="w-5 h-5" />
+          </button>
 
-        {/* Modal Compact Header */}
-        <div className="text-center max-w-lg mx-auto mb-3">
-          <div className="flex items-center justify-center gap-2 mb-1">
-            <div className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25">
-              <Sparkles className="w-4 h-4 text-amber-300" />
-            </div>
-            <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
-              Top Up Scholar Credits
-            </h2>
-          </div>
-          <p className="text-xs text-slate-700 dark:text-slate-300 font-medium">
-            Synthesize 6,000+ word academic reviews across 20 verified papers with IEEE / APA export.
-          </p>
-
-          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 text-xs font-bold text-blue-900 dark:text-blue-300">
-            <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 fill-blue-600 dark:fill-cyan-400" />
-            <span>Current Balance: <strong className="text-blue-950 dark:text-cyan-200">{currentCredits} {currentCredits === 1 ? 'Credit' : 'Credits'}</strong></span>
-          </div>
-
-          {successMessage && (
-            <div className="mt-2 p-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 text-xs font-bold animate-in fade-in border border-emerald-200 dark:border-emerald-800">
-              ✓ {successMessage}
-            </div>
-          )}
-        </div>
-
-        {/* Pricing Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-1">
-          {tiers.map((tier) => (
-            <div
-              key={tier.name}
-              className={`relative rounded-xl p-4 sm:p-5 flex flex-col justify-between transition-all border ${tier.cardBg} ${tier.accentBorder}`}
-            >
-              {tier.popular && (
-                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md whitespace-nowrap">
-                  Most Popular
-                </span>
-              )}
-
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <h3 className="font-bold text-sm text-slate-900 dark:text-white">
-                    {tier.name}
-                  </h3>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${tier.badgeColor}`}>
-                    {tier.badge}
-                  </span>
-                </div>
-
-                <p className="text-[11px] text-slate-700 dark:text-slate-300 font-medium mb-3 leading-snug">
-                  {tier.description}
-                </p>
-
-                <div className="mb-3 pb-3 border-b border-slate-200 dark:border-slate-800/80">
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">{tier.price}</span>
-                    <span className="text-xs font-bold text-slate-600 dark:text-slate-300">/ {tier.credits} papers</span>
-                  </div>
-                  <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 inline-block">
-                    {tier.perPaper}
-                  </span>
-                </div>
-
-                {/* Features List */}
-                <ul className="space-y-2 mb-4 text-xs text-slate-800 dark:text-slate-200 font-medium">
-                  {tier.features.map((f, idx) => (
-                    <li key={idx} className="flex items-start gap-2 leading-tight">
-                      <Check className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 shrink-0 mt-0.5" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
+          <div className="text-center max-w-lg mx-auto pr-7 sm:pr-0">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <div className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25">
+                <Sparkles className="w-4 h-4 text-amber-300" />
               </div>
-
-              {/* Action Button */}
-              <button
-                type="button"
-                disabled={loadingPack !== null}
-                onClick={() => handleSelectPack(tier.key, tier.credits, tier.name)}
-                className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer disabled:opacity-50 ${tier.buttonClass}`}
-              >
-                {loadingPack === tier.name ? (
-                  <>
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                    <span>Connecting to Safepay...</span>
-                  </>
-                ) : (
-                  <span>{tier.buttonText}</span>
-                )}
-              </button>
+              <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">
+                Top Up Scholar Credits
+              </h2>
             </div>
-          ))}
+            <p className="text-[11px] sm:text-xs text-slate-600 dark:text-slate-300 font-medium line-clamp-1 sm:line-clamp-none">
+              Synthesize 6,000+ word academic reviews across 20 verified papers with IEEE / APA export.
+            </p>
+
+            <div className="mt-1.5 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 text-[11px] sm:text-xs font-bold text-blue-900 dark:text-blue-300">
+              <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 fill-blue-600 dark:fill-cyan-400" />
+              <span>Current Balance: <strong className="text-blue-950 dark:text-cyan-200">{currentCredits} {currentCredits === 1 ? 'Credit' : 'Credits'}</strong></span>
+            </div>
+
+            {successMessage && (
+              <div className="mt-2 p-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 text-xs font-bold animate-in fade-in border border-emerald-200 dark:border-emerald-800">
+                ✓ {successMessage}
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Footer Guarantee */}
-        <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800/80 flex items-center justify-between gap-3 text-[11px] text-slate-700 dark:text-slate-300 font-medium">
+        {/* Scrollable Pricing Cards Container */}
+        <div className="p-3.5 sm:p-6 overflow-y-auto overscroll-contain flex-1">
+          {/* Mobile Quick Tier Navigation Pills */}
+          <div className="flex md:hidden items-center justify-center gap-1.5 mb-3 p-1 bg-slate-100 dark:bg-slate-800/60 rounded-xl">
+            {tiers.map((t) => (
+              <button
+                key={t.key}
+                type="button"
+                onClick={() => {
+                  const el = document.getElementById(`tier-card-${t.key}`);
+                  el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }}
+                className="flex-1 py-1 px-1.5 text-[11px] font-bold rounded-lg transition-all text-center text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 shadow-2xs cursor-pointer active:scale-95"
+              >
+                {t.credits} Papers {t.popular && "⭐"}
+              </button>
+            ))}
+          </div>
+
+          {/* Pricing Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 my-1">
+            {tiers.map((tier) => (
+              <div
+                key={tier.name}
+                id={`tier-card-${tier.key}`}
+                className={`relative rounded-xl p-3.5 sm:p-5 flex flex-col justify-between transition-all border ${tier.cardBg} ${tier.accentBorder}`}
+              >
+                {tier.popular && (
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black uppercase tracking-wider shadow-md whitespace-nowrap">
+                    Most Popular
+                  </span>
+                )}
+
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <h3 className="font-bold text-sm text-slate-900 dark:text-white">
+                      {tier.name}
+                    </h3>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${tier.badgeColor}`}>
+                      {tier.badge}
+                    </span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-700 dark:text-slate-300 font-medium mb-2.5 leading-snug">
+                    {tier.description}
+                  </p>
+
+                  <div className="mb-2.5 pb-2.5 border-b border-slate-200 dark:border-slate-800/80">
+                    <div className="flex items-baseline gap-1.5">
+                      <span className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">{tier.price}</span>
+                      <span className="text-xs font-bold text-slate-600 dark:text-slate-300">/ {tier.credits} papers</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 mt-0.5 inline-block">
+                      {tier.perPaper}
+                    </span>
+                  </div>
+
+                  {/* Features List */}
+                  <ul className="space-y-1.5 sm:space-y-2 mb-3.5 text-[11px] sm:text-xs text-slate-800 dark:text-slate-200 font-medium">
+                    {tier.features.map((f, idx) => (
+                      <li key={idx} className="flex items-start gap-2 leading-tight">
+                        <Check className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 shrink-0 mt-0.5" />
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Action Button */}
+                <button
+                  type="button"
+                  disabled={loadingPack !== null}
+                  onClick={() => handleSelectPack(tier.key, tier.credits, tier.name)}
+                  className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 active:scale-95 cursor-pointer disabled:opacity-50 ${tier.buttonClass}`}
+                >
+                  {loadingPack === tier.name ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Connecting to Safepay...</span>
+                    </>
+                  ) : (
+                    <span>{tier.buttonText}</span>
+                  )}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Sticky Footer Guarantee */}
+        <div className="px-4 py-2.5 sm:px-6 sm:py-3 border-t border-slate-100 dark:border-slate-800/80 bg-slate-50/80 dark:bg-[#0f1118]/80 flex items-center justify-between gap-2 text-[11px] text-slate-600 dark:text-slate-400 font-medium shrink-0">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
-            <span>Instant balance activation • Credits never expire</span>
+            <span className="truncate">Instant activation • Credits never expire</span>
           </div>
-          <div className="text-[11px] text-slate-600 dark:text-slate-400 font-semibold">
-            🔒 256-bit encrypted channel
+          <div className="text-[10px] sm:text-[11px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">
+            🔒 256-bit encrypted
           </div>
         </div>
       </div>
