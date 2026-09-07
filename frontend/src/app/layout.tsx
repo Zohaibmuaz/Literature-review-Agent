@@ -13,17 +13,24 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "AI PhD Research Automation",
-  description: "Generate comprehensive, PhD-level literature reviews with AI.",
+  title: "LitReviewer AI - Autonomous Literature Review Agent",
+  description: "Generate comprehensive, publication-grade academic literature reviews powered by multi-agent AI.",
 };
+
+import { ThemeProvider } from "../components/theme-provider";
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

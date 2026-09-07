@@ -1,0 +1,4 @@
+- [x] Task 1: Update Retrieval Logic. Implement a 'Metadata-Grouped Retrieval' function to ensure we extract highly relevant chunks from ALL 20 distinct papers based on their metadata/IDs.
+- [x] Task 2: Implement Map-Reduce for Synthesis. Create a function that batches the retrieved chunks (e.g., 5 papers per batch) and generates a 'Mini-Synthesis' for each batch to avoid LLM context overload.
+- [x] Task 3: Implement Sequential Generation Workflow. Create functions to generate the paper section-by-section (Introduction, Thematic Analysis 1, Methodological Review, Discussion, Conclusion) passing the Mini-Syntheses as context.
+- [x] Task 4: Final Stitching. Combine all sequential sections into one cohesive final document and format the references accurately.

@@ -1,9 +1,32 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+@variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+}
+
+@layer utilities {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.3);
+    border-radius: 20px;
+  }
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(75, 85, 99, 0.4);
+  }
 }
 
 @theme inline {
@@ -11,13 +34,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
@@ -29,23 +45,23 @@ body {
 /* Academic Paper Styles (Screen & Print) */
 .academic-paper {
   font-family: "Times New Roman", Times, serif;
-  color: black;
+  color: inherit;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .academic-paper h1 {
   text-align: center;
-  font-size: 24pt;
-  margin-top: 40px;
-  margin-bottom: 16px;
-  font-weight: normal;
+  font-size: 22pt;
+  margin-top: 32px;
+  margin-bottom: 14px;
+  font-weight: bold;
 }
 
 .academic-paper h2 {
   font-size: 14pt;
-  margin-top: 30px;
-  margin-bottom: 15px;
+  margin-top: 28px;
+  margin-bottom: 12px;
   font-weight: bold;
 }
 
@@ -54,41 +70,122 @@ body {
   font-style: italic;
   font-weight: bold;
   margin-top: 20px;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .academic-paper p {
   text-align: justify;
   line-height: 1.6;
   font-size: 11pt;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 /* Center the author and institution line below the title */
 .academic-paper h1 + p {
   text-align: center;
   font-size: 12pt;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
 }
 
-/* Specific styling for the Abstract heading */
-.academic-paper h2:nth-of-type(1) {
-  text-align: center;
-  font-size: 12pt;
-}
-
+/* Academic Print Optimization */
 @media print {
   @page {
     size: A4;
-    margin: 25mm 25mm 25mm 25mm;
+    margin: 1.0in;
   }
-  body {
-    background: white;
+
+  *, *::before, *::after {
+    color: #000000 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
   }
-  .academic-paper {
-    max-width: 100%;
+
+  body, html {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: "Times New Roman", Times, serif !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
-  .no-print {
+
+  /* Hide navigation, sidebar, editor chrome, locked banners and controls */
+  header, nav, aside, footer, button, [role="button"], .no-print {
     display: none !important;
+  }
+
+  .academic-paper {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-family: "Times New Roman", Times, serif !important;
+  }
+
+  .academic-paper h1,
+  .academic-paper h2,
+  .academic-paper h3,
+  .academic-paper h4 {
+    color: #000000 !important;
+    font-family: "Times New Roman", Times, serif !important;
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+  }
+
+  .academic-paper h1 {
+    font-size: 20pt !important;
+    text-align: center !important;
+    margin-top: 0 !important;
+    margin-bottom: 12pt !important;
+  }
+
+  .academic-paper h2 {
+    font-size: 13pt !important;
+    font-weight: bold !important;
+    border-bottom: 1px solid #000000 !important;
+    margin-top: 20pt !important;
+    margin-bottom: 6pt !important;
+    padding-bottom: 2pt !important;
+  }
+
+  .academic-paper h3 {
+    font-size: 11pt !important;
+    font-style: italic !important;
+    margin-top: 14pt !important;
+    margin-bottom: 4pt !important;
+  }
+
+  .academic-paper p,
+  .academic-paper li {
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+    text-align: justify !important;
+    color: #000000 !important;
+    orphans: 3 !important;
+    widows: 3 !important;
+  }
+
+  .academic-paper blockquote {
+    border-left: 2.5px solid #000000 !important;
+    padding-left: 10pt !important;
+    margin: 8pt 0 !important;
+    font-style: italic !important;
+    background: transparent !important;
+  }
+
+  .academic-paper a {
+    color: #000000 !important;
+    text-decoration: underline !important;
+  }
+
+  /* Force hard page break before References in print */
+  .page-break,
+  .print-page-break {
+    break-before: page !important;
+    page-break-before: always !important;
+    clear: both !important;
   }
 }

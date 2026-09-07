@@ -22,3 +22,10 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+
+# Generated Exports & Root Temporary Assets
+*.doc
+*.docx
+*.pdf
+ChatGPT*.png
+/logo.png

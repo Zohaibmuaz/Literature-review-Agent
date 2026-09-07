@@ -6,3 +6,6 @@ class ResearchState(TypedDict):
     institution: str
     paper_list: List[Dict[str, Any]]
     final_draft: Optional[str]
+    citation_style: str
+    ui_queue: Optional[Any]
+    mode: Optional[str]
