@@ -1356,7 +1356,7 @@ export default function Home() {
                   <button
                     type="button"
                     onClick={() => setShowMobileSetup(true)}
-                    className="lg:hidden mt-2 px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold text-xs shadow-md flex items-center gap-2 active:scale-95 cursor-pointer"
+                    className="mt-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md hover:shadow-lg transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
                   >
                     <Sparkles className="w-3.5 h-3.5 text-amber-300" />
                     <span>Start Research Paper</span>
@@ -1484,21 +1484,24 @@ export default function Home() {
         </main>
       </div>
 
-      {/* Mobile Research Configuration Modal (< lg) */}
+      {/* Research Configuration Modal (Laptop & Mobile) */}
       {showMobileSetup && (
-        <div className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 p-4 flex items-center justify-center animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-white dark:bg-[#15171e] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl p-5 relative max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 p-4 flex items-center justify-center animate-in fade-in duration-200">
+          <div className="w-full max-w-md bg-white dark:bg-[#15171e] border border-gray-200 dark:border-gray-800 rounded-2xl shadow-2xl p-5 sm:p-6 relative max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-gray-800 mb-4">
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg bg-blue-600 text-white flex items-center justify-center shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
                   <Sparkles className="w-4 h-4 text-amber-300" />
                 </div>
-                <h2 className="text-sm font-bold text-gray-900 dark:text-white">Research Configuration</h2>
+                <div>
+                  <h2 className="text-sm font-bold text-gray-900 dark:text-white">Start Research Review</h2>
+                  <p className="text-[10px] text-gray-500 dark:text-gray-400">Configure parameters for AI synthesis</p>
+                </div>
               </div>
               <button
                 type="button"
                 onClick={() => setShowMobileSetup(false)}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
                 title="Close"
               >
                 <X className="w-4 h-4" />
