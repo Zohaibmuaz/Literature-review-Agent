@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
 
+export const dynamic = "force-dynamic";
+
 // In-memory set to prevent replay attacks / double redemption of the same tracker
 const processedTrackers = new Set<string>();
 
