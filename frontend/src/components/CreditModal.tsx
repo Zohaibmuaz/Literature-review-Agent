@@ -87,7 +87,7 @@ export function CreditModal({
         "Apple Pay, Google Pay, Cards",
       ],
       buttonText: "Get 3 Papers ($4.99)",
-      polarLink: "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_dW8sKrSaTu3qomBYxesDgitWar1DAjRIQ6tUx2d9lex/redirect",
+      polarLink: "https://buy.polar.sh/polar_cl_EFI1WwRBT6dxVWjI0x3HIqhmXR7qjdTXwLvTG2v3mmp",
     },
     {
       key: "researcher",
@@ -109,7 +109,7 @@ export function CreditModal({
         "Apple Pay, Google Pay, Cards",
       ],
       buttonText: "Get 8 Papers ($9.99)",
-      polarLink: "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_edzkB4PS35uyg7JmugmSKgNQ90c0o6v9aHFko08dpQL/redirect",
+      polarLink: "https://buy.polar.sh/polar_cl_HVpkhknlyBrYjCHoWa7xdsy0qI75HLf4iubHm0yHP5L",
     },
     {
       key: "scholar",
@@ -131,7 +131,7 @@ export function CreditModal({
         "Apple Pay, Google Pay, Cards",
       ],
       buttonText: "Get 20 Papers ($19.99)",
-      polarLink: "https://sandbox-api.polar.sh/v1/checkout-links/polar_cl_gx9iDTeV7A3v2GE2ezQipu4YInK4jg4LfK9KW3Tu6bO/redirect",
+      polarLink: "https://buy.polar.sh/polar_cl_ATJAjCIZbikOWlaBBFFMLs1IR0WgWIgXZMnHc07uufs",
     },
   ];
 
